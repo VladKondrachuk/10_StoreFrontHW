@@ -84,47 +84,37 @@ function promptUserPurchase() {
               if(err) throw err;
 
               console.log("Your order has been placed! Your total is $" + productData.price * quantity)
+              console.log('product Data ' + productData.stock_quantity)
               console.log("--------------------------------------------------------------")
 
 
               inquirer
-.prompt({
-  name: "BuyAnother",
-  type: "rawlist",
-  message: "Would you like to buy something else?",
-  choices: ["Y", "N"]
-}).then(function(answer) {
-  // based on their answer, either call the bid or the post functions
-  if (answer.BuyAnother.toUpperCase() === "Y") {
-    promptUserPurchase();
-  }
-  else {
-    connection.end();
-  }
-});
-
-
-
-
-
-
-
-              
-              
+                  .prompt({
+                    name: "BuyAnother",
+                    type: "rawlist",
+                    message: "Would you like to buy something else?",
+                    choices: ["Y", "N"]
+                  }).then(function(answer) {
+                    // based on their answer, either call the bid or the post functions
+                    if (answer.BuyAnother.toUpperCase() === "Y") {
+                      promptUserPurchase();
+                    }
+                    else {
+                      connection.end();
+                    }
+                  });                        
             })
           }else{
             console.log("Sorry there is not enough product in stock")
             console.log("Please make another selection")
 
             displayInventory();
-          }
-
-          
+          }         
         }
       })
     })
 }
-
+//Function used to display table
 function displayInventory(){
 
   queryString = 'SELECT * FROM products';
