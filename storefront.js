@@ -21,10 +21,10 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
   if (err) throw err;
   // run the start function after the connection is made to prompt the user
+  //Its WORKING!!!! FINALLY!!!
   console.log("Connected as id :" + connection.threadId);
 });
-
-
+//validate user input to make sure that the user is not putting in decimals
 function validateInput(value){
   let integer = Number.isInteger(parseFloat(value));
   let sign = Math.sign(value);
@@ -35,7 +35,7 @@ function validateInput(value){
     return 'Please enter whole number';
   }
 }
-
+//Main function
 function promptUserPurchase() {
     inquirer.prompt([
         {
@@ -54,33 +54,63 @@ function promptUserPurchase() {
             filter: Number
         }
     ]).then(function(input){
-      console.log("Problem Here")
+      
       let item = input.item_id;
-      let quantity = input.stock_quantity;
+      let quantity = input.quantity;
 
       let queryString = 'SELECT * FROM products WHERE ?';
-
-      connection.query(queryString, {item_id: item}, function(err,data){
+      
+      connection.query(queryString, {item_id:item}, function(err,data){
         if(err) throw err;
-
+        console.log("Connection Made")
         if(data.length===0){
           console.log("Item not found, please select another item")
           displayInventory();
         }else{
 
           let productData = data[0];
-
-          if(quantity <=productData.stock_quantity){
+          console.log("Connection made to query function")
+          console.log('product Data ' + productData.stock_quantity)
+          console.log('quantity ' + quantity)
+          //item id will not be defined bc its only in SQL console.log('item_id' + item_id)
+          console.log('item ' + item)
+          
+          if(quantity<=productData.stock_quantity){
             console.log("The item is in stock please place an order!");
 
-            let updateQueryString = 'UPDATE products SET stock_quantity ' + (productData.stock_quantity - quantity)
-
-            connection.query(updateQueryString, function(err,data){
+            let updateQueryString = 'UPDATE products SET stock_quantity = ' + (productData.stock_quantity - quantity) + ' WHERE item_id = ' + item;
+            console.log("Connection made to update the stock quantity on the server")
+            connection.query(updateQueryString, function(err, data){
               if(err) throw err;
 
               console.log("Your order has been placed! Your total is $" + productData.price * quantity)
               console.log("--------------------------------------------------------------")
-              connection.end();
+
+
+              inquirer
+.prompt({
+  name: "BuyAnother",
+  type: "rawlist",
+  message: "Would you like to buy something else?",
+  choices: ["Y", "N"]
+}).then(function(answer) {
+  // based on their answer, either call the bid or the post functions
+  if (answer.BuyAnother.toUpperCase() === "Y") {
+    promptUserPurchase();
+  }
+  else {
+    connection.end();
+  }
+});
+
+
+
+
+
+
+
+              
+              
             })
           }else{
             console.log("Sorry there is not enough product in stock")
@@ -88,6 +118,8 @@ function promptUserPurchase() {
 
             displayInventory();
           }
+
+          
         }
       })
     })
@@ -108,11 +140,11 @@ function displayInventory(){
     for (let i =0; i<data.length; i++){
 
       initialDisplay = '';
-      initialDisplay += 'Item ID: ' + data[i].item_id + '   //   '
-      initialDisplay += 'Product Name: ' + data[i].product_name + '   //   '
-      initialDisplay += 'Department Name: ' + data[i].department_name + '   //   '
+      initialDisplay += 'Item ID: ' + data[i].item_id + ' // '
+      initialDisplay += 'Product Name: ' + data[i].product_name + ' // '
+      initialDisplay += 'Department Name: ' + data[i].department_name + ' // '
       initialDisplay += 'Price $: ' + data[i].price + '   //   '
-
+      initialDisplay += 'Amount in Stock : ' + data[i].stock_quantity + ' // '
       console.log(initialDisplay)
     }
 
