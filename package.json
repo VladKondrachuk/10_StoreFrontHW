@@ -1,0 +1,24 @@
+{
+  "name": "great-bay-basic",
+  "version": "1.0.0",
+  "description": "activity for demonstrating inquirer with mysql",
+  "main": "greatBayBasic.js",
+  "dependencies": {
+    "inquirer": "^3.3.0",
+    "mysql": "^2.16.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VladKondrachuk/10_StoreFrontHW.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VladKondrachuk/10_StoreFrontHW/issues"
+  },
+  "homepage": "https://github.com/VladKondrachuk/10_StoreFrontHW#readme",
+  "devDependencies": {}
+}
